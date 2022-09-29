@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/Qianlitp/crawlergo/pkg/config"
 	"github.com/urfave/cli/v2"
 )
 
 var cliFlags = []cli.Flag{
+	SetIgnorePatterns(),
+	SetCrawlTimeout(),
 	SetChromePath(),
 	SetCustomHeaders(),
 	SetPostData(),
@@ -98,6 +101,22 @@ func SetOutputJSON() *cli.StringFlag {
 		Name:        "output-json",
 		Usage:       "write output to a json file.Such as result_www_test_com.json",
 		Destination: &outputJsonPath,
+	}
+}
+
+func SetIgnorePatterns() *cli.StringSliceFlag {
+	return &cli.StringSliceFlag{
+		Name:    "ignore-patterns",
+		Aliases: []string{"ipm"},
+		Usage:   "crawlergo will not crawl these URLs matched by regular expressions. e.g.: -irm https?://foo.bar.com/[0-9].html http://.*.xxx.com",
+	}
+}
+
+func SetCrawlTimeout() *cli.DurationFlag {
+	return &cli.DurationFlag{
+		Name:    "crawl-timeout",
+		Aliases: []string{"ct"},
+		Usage:   "crawlergo will not crawl these URLs matched by regular expressions. e.g.: --ct 10m",
 	}
 }
 
