@@ -194,26 +194,26 @@ func (tab *Tab) IsTopFrame(FrameID string) bool {
 */
 func (tab *Tab) ParseResponseURL(v *network.EventResponseReceived) {
 	defer tab.WG.Done()
-	ctx := tab.GetExecutor()
-	res, err := network.GetResponseBody(v.RequestID).Do(ctx)
-	if err != nil {
-		logger.Logger.Debug("ParseResponseURL ", err)
-		return
-	}
-	resStr := string(res)
 
-	urlRegex := regexp.MustCompile(config.SuspectURLRegex)
-	urlList := urlRegex.FindAllString(resStr, -1)
-	for _, url := range urlList {
+	// ctx := tab.GetExecutor()
+	// res, err := network.GetResponseBody(v.RequestID).Do(ctx)
+	// if err != nil {
+	// 	logger.Logger.Debug("ParseResponseURL ", err)
+	// 	return
+	// }
+	// resStr := string(res)
 
-		url = url[1 : len(url)-1]
-		url_lower := strings.ToLower(url)
-		if strings.HasPrefix(url_lower, "image/x-icon") || strings.HasPrefix(url_lower, "text/css") || strings.HasPrefix(url_lower, "text/javascript") {
-			continue
-		}
+	// urlRegex := regexp.MustCompile(config.SuspectURLRegex)
+	// urlList := urlRegex.FindAllString(resStr, -1)
+	// for _, url := range urlList {
+	// 	url = url[1 : len(url)-1]
+	// 	url_lower := strings.ToLower(url)
+	// 	if strings.HasPrefix(url_lower, "image/x-icon") || strings.HasPrefix(url_lower, "text/css") || strings.HasPrefix(url_lower, "text/javascript") {
+	// 		continue
+	// 	}
 
-		tab.AddResultUrl(config.GET, url, config.FromJSFile)
-	}
+	// 	tab.AddResultUrl(config.GET, url, config.FromJSFile)
+	// }
 }
 
 func (tab *Tab) HandleRedirectionResp(v *network.EventResponseReceivedExtraInfo) {
