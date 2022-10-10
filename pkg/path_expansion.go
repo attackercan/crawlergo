@@ -39,25 +39,28 @@ const pathStr = "11/123/2017/2018/message/mis/model/abstract/account/act/action"
 var pathFuzzWG sync.WaitGroup
 var validateUrl mapset.Set
 
+func robotsUrl(scheme, host string) string {
+	return scheme + "://" + host + "/robots.txt"
+}
+
 /**
 从robots.txt文件中获取路径信息
 */
 func GetPathsFromRobots(navReq model2.Request) []*model2.Request {
-	logger.Logger.Info("starting to get paths from robots.txt.")
 	var result []*model2.Request
-	var urlFindRegex = regexp.MustCompile(`(?:Disallow|Allow):.*?(/.+)`)
-	var urlRegex = regexp.MustCompile(`(/.+)`)
+	var urlFindRegex = regexp.MustCompile(`(?:Disallow|Allow): ?(.+)`)
 
-	navReq.URL.Path = "/"
-	url := navReq.URL.NoQueryUrl() + "robots.txt"
-
-	resp, err := requests.Get(url, tools.ConvertHeaders(navReq.Headers),
-		&requests.ReqOptions{AllowRedirect: false,
-			Timeout: 5,
-			Proxy:   navReq.Proxy})
+	resp, err := requests.Get(
+		robotsUrl(navReq.URL.Scheme, navReq.URL.Host),
+		tools.ConvertHeaders(navReq.Headers),
+		&requests.ReqOptions{
+			AllowRedirect: false,
+			Timeout:       10,
+			Proxy:         navReq.Proxy,
+		},
+	)
 	if err != nil {
-		//for
-		//logger.Logger.Error("request to robots.txt error ", err)
+		logger.Logger.Error("request to robots.txt error ", err)
 		return result
 	}
 
@@ -66,8 +69,11 @@ func GetPathsFromRobots(navReq model2.Request) []*model2.Request {
 	}
 	urlList := urlFindRegex.FindAllString(resp.Text, -1)
 	for _, _url := range urlList {
-		_url = strings.TrimSpace(_url)
-		_url = urlRegex.FindString(_url)
+		if strings.Contains(_url, "*") {
+			continue
+		}
+		parts := strings.SplitN(_url, ":", 2)
+		_url = strings.TrimSpace(parts[1])
 		url, err := model2.GetUrl(_url, *navReq.URL)
 		if err != nil {
 			continue
