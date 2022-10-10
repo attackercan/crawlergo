@@ -8,9 +8,10 @@ import (
 )
 
 var cliFlags = []cli.Flag{
+	SetTargetUrls(),
+	SetIgnorePatterns(),
 	SetChromePath(),
 	SetChromeWSUrl(),
-	SetIgnorePatterns(),
 	SetCustomHeaders(),
 	SetPostData(),
 	SetMaxCrawledCount(),
@@ -120,6 +121,15 @@ func SetOutputJSON() *cli.StringFlag {
 		Name:        "output-json",
 		Usage:       "write output to a json file.Such as result_www_test_com.json",
 		Destination: &outputJsonPath,
+	}
+}
+
+func SetTargetUrls() *cli.StringSliceFlag {
+	return &cli.StringSliceFlag{
+		Name:     "url",
+		Aliases:  []string{"u"},
+		Required: true,
+		Usage:    "target urls for crawlergo. at least 1 must be set. e.g.: -u https://foo.bar.com/",
 	}
 }
 

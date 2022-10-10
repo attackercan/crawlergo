@@ -101,10 +101,6 @@ func run(c *cli.Context) error {
 	c.StringSlice((""))
 	signalChan = make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGINT)
-	if c.Args().Len() == 0 {
-		logger.Logger.Error("url must be set")
-		return errors.New("url must be set")
-	}
 
 	// 设置日志输出级别
 	level, err := logrus.ParseLevel(logLevel)
@@ -114,7 +110,7 @@ func run(c *cli.Context) error {
 	logger.Logger.SetLevel(level)
 
 	var targets []*model2.Request
-	for _, _url := range c.Args().Slice() {
+	for _, _url := range c.StringSlice("url") {
 		var req model2.Request
 		url, err := model2.GetUrl(_url)
 		if err != nil {
