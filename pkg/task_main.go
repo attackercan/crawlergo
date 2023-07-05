@@ -176,7 +176,8 @@ func (t *CrawlerTask) Run() {
 	logger.Logger.Info("filter repeat, target count: ", len(initTasks))
 
 	for _, req := range initTasks {
-		if !engine2.IsIgnoredByKeywordMatch(*req, t.Config.IgnoreKeywords) {
+		if !engine2.IsIgnoredByKeywordMatch(*req, t.Config.IgnoreKeywords) &&
+		   !engine2.IsIgnoredByRegexpMatch(*req, t.Config.IgnorePatterns){
 			t.addTask2Pool(req)
 		}
 	}
@@ -273,7 +274,8 @@ func (t *tabTask) Task() {
 			t.crawlerTask.Result.resultLock.Lock()
 			t.crawlerTask.Result.ReqList = append(t.crawlerTask.Result.ReqList, req)
 			t.crawlerTask.Result.resultLock.Unlock()
-			if !engine2.IsIgnoredByKeywordMatch(*req, t.crawlerTask.Config.IgnoreKeywords) {
+			if !engine2.IsIgnoredByKeywordMatch(*req, t.crawlerTask.Config.IgnoreKeywords) &&
+			   !engine2.IsIgnoredByRegexpMatch(*req, t.crawlerTask.Config.IgnorePatterns){
 				t.crawlerTask.addTask2Pool(req)
 			}
 		}

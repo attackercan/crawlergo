@@ -10,6 +10,7 @@ import (
 var cliFlags = []cli.Flag{
 	SetChromePath(),
 	SetChromeWSUrl(),
+	SetIgnorePatterns(),
 	SetCustomHeaders(),
 	SetPostData(),
 	SetMaxCrawledCount(),
@@ -36,6 +37,14 @@ var cliFlags = []cli.Flag{
 	SetLogLevel(),
 	SetNoHeadless(),
 	SetMaxTime(),
+}
+
+func SetIgnorePatterns() *cli.StringSliceFlag {
+	return &cli.StringSliceFlag{
+		Name:    "ignore-patterns",
+		Aliases: []string{"ipm"},
+		Usage:   "Skip crawling URLs matching regular expressions. e.g.: -igp https?://foo.bar.com/[0-9].html -igp http://.*.xxx.com",
+	}
 }
 
 func SetChromePath() *cli.PathFlag {

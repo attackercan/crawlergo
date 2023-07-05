@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"regexp"
 	"strings"
 	"sync"
 	"syscall"
@@ -97,6 +98,7 @@ func main() {
 }
 
 func run(c *cli.Context) error {
+	c.StringSlice((""))
 	signalChan = make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGINT)
 	if c.Args().Len() == 0 {
@@ -128,6 +130,7 @@ func run(c *cli.Context) error {
 		targets = append(targets, &req)
 	}
 	taskConfig.IgnoreKeywords = ignoreKeywords.Value()
+	taskConfig.IgnorePatterns = compiledPatterns(c.StringSlice("ignore-patterns"))
 	if taskConfig.Proxy != "" {
 		logger.Logger.Info("request with proxy: ", taskConfig.Proxy)
 	}
@@ -189,6 +192,19 @@ func run(c *cli.Context) error {
 	outputResult(result)
 
 	return nil
+}
+
+func compiledPatterns(patterns []string) []*regexp.Regexp {
+	var compiled []*regexp.Regexp
+	for _, pattern := range patterns {
+		c, err := regexp.Compile(pattern)
+		if err != nil {
+			logger.Logger.Fatal(fmt.Sprintf("Failed to compile pattern: %s", pattern))
+			panic(err)
+		}
+		compiled = append(compiled, c)
+	}
+	return compiled
 }
 
 func getOption() model2.Options {
