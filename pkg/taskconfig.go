@@ -1,8 +1,8 @@
 package pkg
 
 import (
-	"time"
 	"regexp"
+	"time"
 )
 
 type TaskConfig struct {
@@ -31,6 +31,7 @@ type TaskConfig struct {
 	CustomFormValues        map[string]string // 自定义表单填充参数
 	CustomFormKeywordValues map[string]string // 自定义表单关键词填充内容
 	MaxRunTime              int64             // 最大爬取时间(单位秒），超时则结束任务，平滑结束（比如某个url还未处理完不能结束，需要一次req完成后才可以结束整个任务）
+	NoPostRequests          bool              // Whether to make post requests while crawling
 }
 
 type TaskConfigOptFunc func(*TaskConfig)

@@ -16,7 +16,6 @@ import (
 )
 
 type CrawlerTask struct {
-
 	Browser       *engine2.Browser     //
 	RootDomain    string               // 当前爬取根域名 用于子域名收集
 	Targets       []*model.Request     // 输入目标
@@ -27,7 +26,7 @@ type CrawlerTask struct {
 	taskWG        sync.WaitGroup       // 等待协程池所有任务结束
 	crawledCount  int                  // 爬取过的数量
 	taskCountLock sync.Mutex           // 已爬取的任务总数锁
-  Start         time.Time           //开始时间
+	Start         time.Time            //开始时间
 
 }
 
@@ -55,7 +54,7 @@ func NewCrawlerTask(targets []*model.Request, taskConf TaskConfig) (*CrawlerTask
 		Config: &taskConf,
 	}
 
-	baseFilter := filter.NewSimpleFilter(targets[0].URL.Host)
+	baseFilter := filter.NewSimpleFilter(targets[0].URL.Host, taskConf.NoPostRequests)
 
 	if taskConf.FilterMode == config.SmartFilterMode {
 		crawlerTask.filter = filter.NewSmartFilter(baseFilter, false)
@@ -177,7 +176,7 @@ func (t *CrawlerTask) Run() {
 
 	for _, req := range initTasks {
 		if !engine2.IsIgnoredByKeywordMatch(*req, t.Config.IgnoreKeywords) &&
-		   !engine2.IsIgnoredByRegexpMatch(*req, t.Config.IgnorePatterns){
+			!engine2.IsIgnoredByRegexpMatch(*req, t.Config.IgnorePatterns) {
 			t.addTask2Pool(req)
 		}
 	}
@@ -275,7 +274,7 @@ func (t *tabTask) Task() {
 			t.crawlerTask.Result.ReqList = append(t.crawlerTask.Result.ReqList, req)
 			t.crawlerTask.Result.resultLock.Unlock()
 			if !engine2.IsIgnoredByKeywordMatch(*req, t.crawlerTask.Config.IgnoreKeywords) &&
-			   !engine2.IsIgnoredByRegexpMatch(*req, t.crawlerTask.Config.IgnorePatterns){
+				!engine2.IsIgnoredByRegexpMatch(*req, t.crawlerTask.Config.IgnorePatterns) {
 				t.crawlerTask.addTask2Pool(req)
 			}
 		}
