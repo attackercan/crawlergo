@@ -31,7 +31,7 @@ var (
 	// completeUrls = []string{
 	// 	"https://test.local.com:1234/adfatd/123456/sx14xi?user=crawlergo&pwd=fa1424&end=1#/user/info",
 	// }
-	smart = NewSmartFilter(NewSimpleFilter(""), true)
+	smart = NewSmartFilter(NewSimpleFilter("", false), true)
 )
 
 func TestDoFilter_countFragment(t *testing.T) {

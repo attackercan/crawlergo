@@ -38,6 +38,16 @@ var cliFlags = []cli.Flag{
 	SetLogLevel(),
 	SetNoHeadless(),
 	SetMaxTime(),
+	SetNoPostRequest(),
+}
+
+func SetNoPostRequest() *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name:        "no-post-request",
+		Value:       false,
+		Usage:       "Whether to make post requests while crawling",
+		Destination: &taskConfig.NoPostRequests,
+	}
 }
 
 func SetIgnorePatterns() *cli.StringSliceFlag {

@@ -12,15 +12,16 @@ type SimpleFilter struct {
 	UniqueSet       mapset.Set
 	HostLimit       string
 	staticSuffixSet mapset.Set
+	NoPost          bool
 }
 
-func NewSimpleFilter(host string) *SimpleFilter {
+func NewSimpleFilter(host string, noPost bool) *SimpleFilter {
 	staticSuffixSet := config.StaticSuffixSet.Clone()
 
 	for _, suffix := range []string{"js", "css", "json"} {
 		staticSuffixSet.Add(suffix)
 	}
-	s := &SimpleFilter{UniqueSet: mapset.NewSet(), staticSuffixSet: staticSuffixSet, HostLimit: host}
+	s := &SimpleFilter{UniqueSet: mapset.NewSet(), staticSuffixSet: staticSuffixSet, HostLimit: host, NoPost: noPost}
 	return s
 }
 
@@ -34,6 +35,9 @@ func (s *SimpleFilter) DoFilter(req *model.Request) bool {
 	}
 	// 首先判断是否需要过滤域名
 	if s.HostLimit != "" && s.DomainFilter(req) {
+		return true
+	}
+	if s.NoPost && req.Method == config.POST {
 		return true
 	}
 	// 去重
