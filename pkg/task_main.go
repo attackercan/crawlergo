@@ -260,6 +260,7 @@ func (t *tabTask) Task() {
 		IgnoreKeywords:          t.crawlerTask.Config.IgnoreKeywords,
 		CustomFormValues:        t.crawlerTask.Config.CustomFormValues,
 		CustomFormKeywordValues: t.crawlerTask.Config.CustomFormKeywordValues,
+		NoPostRequests:          t.crawlerTask.Config.NoPostRequests,
 	})
 	tab.Start()
 

@@ -61,6 +61,7 @@ type TabConfig struct {
 	Proxy                   string
 	CustomFormValues        map[string]string
 	CustomFormKeywordValues map[string]string
+	NoPostRequests          bool
 }
 
 type bindingCallPayload struct {

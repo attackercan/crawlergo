@@ -63,6 +63,13 @@ func (tab *Tab) formSubmit() {
 
 	logger.Logger.Debug("formSubmit start")
 
+	if tab.config.NoPostRequests {
+		logger.Logger.Debug("formSubmit skipped: no post request mode")
+		tab.formSubmitWG.Done()
+		tab.formSubmitWG.Done()
+		return
+	}
+
 	// 首先对form表单设置target
 	tab.setFormToFrame()
 
