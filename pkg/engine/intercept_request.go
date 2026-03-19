@@ -34,6 +34,13 @@ func (tab *Tab) InterceptRequest(v *fetch.EventRequestPaused) {
 		_ = fetch.ContinueRequest(v.RequestID).Do(ctx)
 		return
 	}
+	// 阻断POST请求
+	if tab.config.NoPostRequests && _req.Method == config.POST {
+		logger.Logger.Debug("block POST request: " + _req.URL)
+		_ = fetch.FailRequest(v.RequestID, network.ErrorReasonBlockedByClient).Do(ctx)
+		return
+	}
+
 	_option := model2.Options{
 		Headers:  _req.Headers,
 		PostData: _req.PostData,
